@@ -63,4 +63,22 @@ module.exports = function (app){
 
         res.json(service);
     });
+
+/**
+    * @api {delete} /api/status/:id Request service information by Service Hostname ID
+    * @apiGroup Host
+    * @apiName DeleteHost
+    * @apiParam {String} id Service Hostname ID.
+    */
+    app.delete('/api/status/:id', function(req, res){
+      if (!req.body.hasOwnProperty('id')) {
+           res.statusCode = 400;
+           return res.send('Error 400: Delete syntax incorrect.');
+      } else {
+        var service = _services.filter( function (s){
+            return s.id == req.params.id;
+        })[0];
+        res.json(true);
+      }
+    });
 }
