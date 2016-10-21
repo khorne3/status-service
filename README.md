@@ -30,7 +30,7 @@ POST - http://localhost:3000/api/status
 }
 ```
 
-## POST request: Commandline debuggers (i.e. Curl)
+## POST request: Commandline debuggers (i.e. curl)
 
 ```bash
 
