@@ -17,8 +17,8 @@ Please develop test cases when possible.
 # Docs
 To create the api docs run ```npm run docs```
 
-# Example
-## GUI debuggers (i.e. Postman)
+# Example Usages
+## POST request: GUI debuggers (i.e. Postman)
 
 You would be submitting json objects in the body of the text. You also need to indicate in the headers that the Content-type is of "application/json".
 POST - http://localhost:3000/api/status
@@ -30,7 +30,7 @@ POST - http://localhost:3000/api/status
 }
 ```
 
-## Commandline debuggers (i.e. Curl)
+## POST request: Commandline debuggers (i.e. Curl)
 
 ```bash
 
