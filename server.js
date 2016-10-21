@@ -10,6 +10,11 @@ var port = process.env.port || 3000;
 // Gather hostname information
 var hostname = os.hostname();
 
+// Set view engine
+app.set('view engine', 'pug');
+// Serves static files
+app.use(express.static(__dirname + '/static/'));
+
 //Parser setup
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({

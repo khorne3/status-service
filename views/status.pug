@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  .row
+    .col-lg-12
+      .well
+        span.text-success All Services Operational
+        span.small.pull-right Refreshed less than a minute ago
+  .row
+    .col-lg-12
+      ul.list-group
+        each service in services
+          li.list-group-item
+            .details-wrapper
+              .service-details
+                strong
+                  span Host:
+                span #{service.hostName}
+                strong
+                  span Service Name:
+                span=service.serviceName
+            h4#service-status.pull-right
+              if service.value === "Online"
+                span.label.label-success #{service.value}
+              else
+                span.label.label-danger #{service.value}
+            .clearfix
+  .row
+    .col-lg-12
+      a.btn.btn-default.pull-right(href="/api/status") Refresh

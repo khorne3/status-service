@@ -9,58 +9,67 @@ module.exports = function (app){
     * @apiGroup Homepage
     */
     app.get('/', function (req, res){
-        res.send('Hello World');
-    })
+      res.redirect('/api/status');
+    });
 
     /**
     * @api {get} /api/status Status
     * @apiName status
     * @apiGroup Status
     * @apiSuccess {Array} _ all data in `_services`
-    * @apiSuccess {String} _.0.id ID of the service update
+    * @apiSuccess {String} _.0.hostName hostName of the service update
     * @apiSuccess {String} _.0.serviceName Name of the service
     * @apiSuccess {any} _.0.value Information contained in the update.
     */
     app.get('/api/status', function(req, res){
-        res.send(_services);
+        res.render('status', { services: _services });
     });
 
     /**
     * @api {post} /api/status Update status
     * @apiGroup Status
-    * @apiName SendStatus
-    * @apiParam {String} serviceName Mandatory service name
-    * @apiParam {any} value Mandatory service status [1,0, compiled, on, off]
-    * @apiParam {String} hostName Mandatory endpoint hostname
+    * @apiName status
     */
     app.post('/api/status',function(req, res){
+        var serviceValue = "";
         if(!req.body.hasOwnProperty('serviceName') ||
-           !req.body.hasOwnProperty('value') || 
+           !req.body.hasOwnProperty('value') ||
            !req.body.hasOwnProperty('hostName')) {
                res.statusCode = 400;
                return res.send('Error 400: Post syntax incorrect.');
            } else {
+               if(req.body.value === '1'){
+                    serviceValue = "Online";
+               } else if(req.body.value === '0') {
+                    serviceValue = "Offline";
+               } else {
+                   res.statusCode = 400;
+                   return res.send('Error 400: Post syntax invalid.');
+               }
                var newService = {
-                   id : req.body.hostName,
+                   hostName : req.body.hostName,
                    serviceName : req.body.serviceName,
-                   value : req.body.value
+                   value : serviceValue
                };
                _services.push(newService);
-               res.json(true);
+
+              // json needs to be returned rather than a random string
+               res.status(200).json({ message: 'Status submission successful', payload: _services });
            }
     });
 
     /**
-    * @api {get} /api/status/:id Request service information by hostName
+    * @api {get} /api/status/:hostName Request service information
     * @apiGroup Host
     * @apiName GetHost
-    * @apiParam {String} id Service Hostname ID.
+    * @apiParam {String} hostName Service hostName.
     */
-    app.get('/api/status/:id', function(req, res){
+    app.get('/api/status/:hostName', function(req, res){
         var service = _services.filter( function (s){
-            return s.id == req.params.id;
+            return s.hostName == req.params.hostName;
         })[0];
+        _services.push(service);
 
-        res.json(service);
+        res.render('status', { services: _services });
     });
 }

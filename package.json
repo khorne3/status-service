@@ -26,14 +26,15 @@
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "lodash": "^4.16.4",
-    "node-uuid": "^1.4.7"
+    "node-uuid": "^1.4.7",
+    "pug": "^2.0.0-beta6"
   },
   "apidoc": {
-      "name": "Status Service",
-      "version": "1.0.0",
-      "description": "Simple status service to accept service information from remote hosts.",
-      "title": "Status Service",
-      "url": ""
+    "name": "Status Service",
+    "version": "1.0.0",
+    "description": "Simple status service to accept service information from remote hosts.",
+    "title": "Status Service",
+    "url": ""
   },
   "devDependencies": {
     "apidoc": "^0.16.1",

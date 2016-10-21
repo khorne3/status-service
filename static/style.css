@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Roboto, Helvetica, sans-serif;
+}
+
+#service-status {
+  display: inline-block !important;
+}
+
+.details-wrapper {
+  max-width: 450px;
+}
+
+.service-details {
+  display: flex;
+  justify-content: space-around;
+}
