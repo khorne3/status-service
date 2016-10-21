@@ -64,7 +64,7 @@ module.exports = function (app){
         res.json(service);
     });
 
-/**
+    /**
     * @api {delete} /api/status/:id Request service information by Service Hostname ID
     * @apiGroup Host
     * @apiName DeleteHost
