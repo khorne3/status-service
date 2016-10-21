@@ -10,3 +10,4 @@ npm-debug.log*
 coverage
 gh-pages
 .DS_Store
+.vscode

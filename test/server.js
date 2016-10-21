@@ -10,7 +10,7 @@ describe('Testing express server', function(){
     it('Responds to /', function testRoot(done){
         request(server)
             .get('/')
-            .expect(200, done);
+            .expect(302, done);
     });
     it('Returns 404 for everything else', function testPath(done){
         request(server)
@@ -30,7 +30,7 @@ describe('Testing express server', function(){
     it('Returns 404 if posting service without serviceName', function testPath(done){
         request(server)
             .post('/api/status')
-            .send({ value: 'service value' })
+            .send({ hostName: 'localhost', value: 1 })
             .expect(400, 'Error 400: Post syntax incorrect.', done);
     });
     it('Returns 404 if posting service without value', function testPath(done){
@@ -42,8 +42,8 @@ describe('Testing express server', function(){
     it('Returns true if service added', function testPath(done){
         request(server)
             .post('/api/status')
-            .send({ hostName: 'localhost', serviceName: 'service name', value: 'service value' })
-            .expect(200, 'true', done);
+            .send({ hostName: 'localhost', serviceName: 'service name', value: 0})
+            .expect(200, '{"message":"Status submission successful","payload":[{"hostName":"localhost","serviceName":"service name","value":"Offline"}]}', done);
     });
     it('Returns added service after one was added', function testPath(done){
         var checkRsp = function(res){

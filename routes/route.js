@@ -32,19 +32,19 @@ module.exports = function (app){
     */
     app.post('/api/status',function(req, res){
         var serviceValue = "";
-        if(!req.body.hasOwnProperty('serviceName') ||
-           !req.body.hasOwnProperty('value') ||
-           !req.body.hasOwnProperty('hostName')) {
+        if(!req.body.hasOwnProperty('hostName') ||
+           !req.body.hasOwnProperty('serviceName') ||
+           !req.body.hasOwnProperty('value')) {
                res.statusCode = 400;
                return res.send('Error 400: Post syntax incorrect.');
            } else {
-               if(req.body.value === '1'){
+               if(req.body.value === 1){
                     serviceValue = "Online";
-               } else if(req.body.value === '0') {
+               } else if(req.body.value === 0) {
                     serviceValue = "Offline";
                } else {
                    res.statusCode = 400;
-                   return res.send('Error 400: Post syntax invalid.');
+                   return res.send('Error 401: Post syntax invalid.');
                }
                var newService = {
                    hostName : req.body.hostName,
@@ -80,7 +80,7 @@ module.exports = function (app){
     * @apiParam {String} id Service Hostname ID.
     */
     app.delete('/api/status/:id', function(req, res){
-      if (!req.body.hasOwnProperty('id')) {
+      if (!req.body.hasOwnProperty('hostName')) {
            res.statusCode = 400;
            return res.send('Error 400: Delete syntax incorrect.');
       } else {
