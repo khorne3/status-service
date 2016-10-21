@@ -104,5 +104,28 @@ describe('Testing express server', function(){
             });
     });
 
+    it('Returns 404 if deleting service without id', function testPath(done){
+        var serviceId;
+        var getServiceId = function(res){
+            if (!('serviceName' in res.body[0])) throw new Error("missing serviceName key");
+            if (!('value' in res.body[0])) throw new Error("missing value key");
+            serviceId = res.body[0].id;
+        };
+        var checkRsp = function(res){
+            if (false) throw new Error("Not deleted correctly");
+        };
+
+        request(server)
+            .get('/api/status')
+            .expect(200)
+            .expect(getServiceId)
+            .end(function() {
+                request(server)
+                    .delete('/api/status/' + serviceId)
+                    .expect(400, 'Error 400: Delete syntax incorrect.')
+                    .end(done);
+            });
+    });
+
 })
 
