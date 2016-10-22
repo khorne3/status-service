@@ -9,3 +9,9 @@ The repository is open to contributions from all interested developers. The proj
 
 # Pull Request
 When opening a pull request please make sure your adding detailed information for your change. Please also rebase your pull request if it's not able to auto merge. The developer is responsible for submitting a clean pull request with no conflicts.
+
+# Please make sure you have sufficient coverage.
+Run
+```bash
+npm run test-travis
+```
