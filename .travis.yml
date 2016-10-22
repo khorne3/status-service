@@ -1,7 +1,25 @@
 language: node_js
 node_js:
 - node
+
 script:
 - npm run-script test-travis
 - npm run docs
+
+notifications:
+  on_success: change
+  on_failure: always
+
 after_script: cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+
+deploy:
+  provider: cloudfoundry
+  api: https://api.run.pivotal.io
+  username: spaceman.software@gmail.com
+  password:
+    secure: VSyaRSVrAGBKyKlsZIbeeBGQDpYu2ygV6KZSLjbXAn52wzfS/zrHZ5RnifBluaeE/+4zwJou7rMbvQKInatopA2R/eyFDSW6ufHA3bFhUzhytasHe/VsKl7RBQznzVVYrz7CObv/1eB9nGPD4/Wif14TD0XbND/ajz7Wryw3j/TkF2Y5T8E/3ZZXdt1rco3kaGaviXRP1+B31npqvrfs3Nv9Vb0UwjaAKbP2/iy6f5J74N3+mTXMyPFdlqMjdwtvX9MY5nhEvmNfNug98Ssf7uEyTOg0uEBXz8moIyLzCT7l/u4gotOHkSSAGcly3piMp8ftdujJcp1YSMjI0xgf0JCFrCoC8PpkyV8H8nHiZSX+IiXgrw4TsFtW8Y9rvTy19aHyC6iNQzOablV2+Gnn8/PLL+6SXGp711aIvoqenAFAsTMgP08MejIvgwirTPhS58ThZ4sZogeBfX82QideNQDz3J49g3FbDqBQ5d4sjJP0G1tuJh9x249xepFxznioWRhKr7Qbu56cGq9CaJvyfClbSkUndsMj0x6HCgOVtF56X07fhey0lo2ko0jfeAoq2zUvnylnJH36P3YT2InldtRvbztO+Nf83CUpCVg1U7caiWM3djIO0e95ji2f/vFoNLl73Yw1cXrkuC79LzMH64NYYT2PtAn2fqsBfhVHjDw=
+  organization: travis-ci
+  space: development
+  on:
+    repo: BondAnthony/status-service
+    branch: master

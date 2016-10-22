@@ -5,7 +5,7 @@ var os = require('os');
 var bodyParser = require('body-parser');
 
 //Pull env port or default to 3000
-var port = process.env.port || 3000;
+var port = process.env.PORT || 3000;
 
 // Gather hostname information
 var hostname = os.hostname();

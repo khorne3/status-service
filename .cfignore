@@ -1,0 +1,8 @@
+.travis.yml
+.idea
+.gitignore
+CONTRIBUTING.md
+npm-debug.log
+README.md
+node_modules
+test
