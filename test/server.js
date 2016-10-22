@@ -94,7 +94,7 @@ describe('Testing HTML response', function () {
         var checkRsp = function (res) {
             // In this case, a text would be returned, and it is the HTML that gets rendered
             /* Sample HTML response attached below
-            * <!DOCTYPE html><html><head><title>Service Status</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/flatly/bootstrap.min.css"><link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet"><link rel="stylesheet" href="../style.css"></head><body><nav class="navbar navbar-inverse"><div class="container-fluid"><div class="navbar-header"><a class="navbar-brand" href="/">Service Status</a></div></div></nav><div class="container"><div class="row"><div class="col-lg-12"><div class="well"><span class="text-success">All Services Operational</span><span class="small pull-right">Refreshed less than a minute ago</span></div></div></div><div class="row"><div class="col-lg-12"><ul class="list-group"></ul></div></div><div class="row"><div class="col-lg-12"><a class="btn btn-default pull-right" href="/api/status">Refresh</a></div></div></div></body></html>*/
+             * <!DOCTYPE html><html><head><title>Service Status</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/flatly/bootstrap.min.css"><link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet"><link rel="stylesheet" href="../style.css"></head><body><nav class="navbar navbar-inverse"><div class="container-fluid"><div class="navbar-header"><a class="navbar-brand" href="/">Service Status</a></div></div></nav><div class="container"><div class="row"><div class="col-lg-12"><div class="well"><span class="text-success">All Services Operational</span><span class="small pull-right">Refreshed less than a minute ago</span></div></div></div><div class="row"><div class="col-lg-12"><ul class="list-group"></ul></div></div><div class="row"><div class="col-lg-12"><a class="btn btn-default pull-right" href="/api/status">Refresh</a></div></div></div></body></html>*/
             if (!res.text) throw new Error("unexpected results, HTML text should have been returned");
 
         };
@@ -106,7 +106,7 @@ describe('Testing HTML response', function () {
             .end(done);
     });
 
-    it('Checking hostName endpoint', function(done) {
+    it('Checking hostName endpoint', function (done) {
         var checkRsp = function (res) {
             if (!res.text) throw new Error("unexpected results, HTML text should have been returned");
         };
@@ -117,6 +117,24 @@ describe('Testing HTML response', function () {
             .expect(checkRsp)
             .end(done);
     });
+});
 
+describe('Testing post endpoints response', function () {
+    var server = require('../server');
 
+    it('Checking successful post requests, online', function testPath(done) {
+        request(server)
+            .post('/api/status')
+            .send({serviceName: 'testService', hostName: 'localhost', value: 1})
+            .expect(200)
+            .end(done);
+    });
+
+    it('Checking successful post requests, offline', function testPath(done) {
+        request(server)
+            .post('/api/status')
+            .send({serviceName: 'testService', hostName: 'localhost', value: 0})
+            .expect(200)
+            .end(done);
+    });
 });
