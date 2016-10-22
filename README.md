@@ -17,14 +17,25 @@ Please develop test cases when possible.
 # Docs
 To create the api docs run ```npm run docs```
 
-# Example
+# Example Usages
+## POST request: GUI debuggers (i.e. Postman)
+
+You would be submitting json objects in the body of the text. You also need to indicate in the headers that the Content-type is of "application/json".
 POST - http://localhost:3000/api/status
 ```
 {
-    "hostName": "localhost",
-    "serviceName": "replication",
-    "value": 1
+   "hostName":"localhost",
+   "serviceName":"replication",
+   "value":1
 }
+```
+
+## POST request: Commandline debuggers (i.e. curl)
+
+```bash
+
+curl -H "Content-Type: application/json" -d '{"hostName":"localhost", "serviceName":"replication", "value":1}' http://localhost:3000/api/status
+
 ```
 
 # Contribute

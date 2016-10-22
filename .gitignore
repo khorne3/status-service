@@ -11,3 +11,5 @@ coverage
 gh-pages
 .DS_Store
 .vscode
+# Ignore Webstorm config files
+*.idea
