@@ -106,7 +106,7 @@ describe('Testing HTML response', function () {
             .end(done);
     });
 
-    it('Checking hostNme endpoint', function(done) {
+    it('Checking hostName endpoint', function(done) {
         var checkRsp = function (res) {
             if (!res.text) throw new Error("unexpected results, HTML text should have been returned");
         };
