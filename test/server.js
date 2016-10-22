@@ -105,4 +105,18 @@ describe('Testing HTML response', function () {
             .expect(checkRsp)
             .end(done);
     });
+
+    it('Checking hostNme endpoint', function(done) {
+        var checkRsp = function (res) {
+            if (!res.text) throw new Error("unexpected results, HTML text should have been returned");
+        };
+
+        request(server)
+            .get('/api/status/hello')
+            .expect(200)
+            .expect(checkRsp)
+            .end(done);
+    });
+
+
 });
