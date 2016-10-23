@@ -38,5 +38,9 @@ curl -H "Content-Type: application/json" -d '{"hostName":"localhost", "serviceNa
 
 ```
 
+## Live Tests
+
+You can run live tests against our development version [HERE](http://status-dev.cfapps.io/). Commits pushed to master will be deployed to this instance.
+
 # Contribute
 Please feel free to contribute to the project. All we ask is you follow our standards when developing against this project, visit the [contributing](CONTRIBUTING.md) page.
