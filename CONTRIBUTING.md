@@ -1,6 +1,9 @@
 # How to Contribute
 The repository is open to contributions from all interested developers. The project is open to head any direction a developer would like to take it.
 
+# Wiki
+Check the wiki for outstanding tasks that need to be completed. Pick up one of the features and open a pull request or issue. Join us on Slack if you have any questions or suggestions. [Slack #general](http://service-status.slack.com)
+
 # Procedure
 + Create issues that need to be fixed and submit a pull request to master.
 + Provide descriptive commit messages
