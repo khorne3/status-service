@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var uuid = require('node-uuid');
+var path = require('path');
 
 module.exports = function (app){
     _services = [];
@@ -9,7 +10,7 @@ module.exports = function (app){
     * @apiGroup Homepage
     */
     app.get('/', function (req, res){
-      res.redirect('/api/status');
+      res.sendFile('views/index.html', { root: path.join(__dirname, '../static') });
     });
 
     /**
@@ -22,7 +23,7 @@ module.exports = function (app){
     * @apiSuccess {any} _.0.value Information contained in the update.
     */
     app.get('/api/status', function(req, res){
-        res.render('status', { services: _services });
+        res.json({ services: _services });
     });
 
     /**
@@ -70,7 +71,7 @@ module.exports = function (app){
         })[0];
         _services.push(service);
 
-        res.render('status', { services: _services });
+        res.redirect('/');
     });
 
     /**
