@@ -8,7 +8,6 @@ var log4js = require('log4js');
 // Setup Logger
 log4js.configure({
     appenders: [
-        { type: 'console'},
         { type: 'file', filename: 'app.log', category: 'app'}
     ]
 })
