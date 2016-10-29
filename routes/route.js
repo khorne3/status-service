@@ -3,7 +3,7 @@ var uuid = require('node-uuid');
 var path = require('path');
 
 module.exports = function (app){
-    _services = [];
+    var _services = [];
     /**
     * @api {get} / Request homepage
     * @apiName Homepage
@@ -44,8 +44,8 @@ module.exports = function (app){
                } else if(req.body.value === 0) {
                     serviceValue = "Offline";
                } else {
-                   res.statusCode = 400;
-                   return res.send('Error 401: Post syntax invalid.');
+                   res.statusCode = 401;
+                   return res.send('Error 401: Post syntax has an invalid isOnline value.');
                }
                var newService = {
                    hostName : req.body.hostName,
@@ -65,13 +65,24 @@ module.exports = function (app){
     * @apiName GetHost
     * @apiParam {String} hostName Service hostName.
     */
-    app.get('/api/status/:hostName', function(req, res){
-        var service = _services.filter( function (s){
-            return s.hostName == req.params.hostName;
-        })[0];
-        _services.push(service);
+    app.get('/api/status/:hostName', function (req, res) {
 
-        res.redirect('/');
+        try {
+            var service = _services.filter(function (s) {
+                return s.hostName == req.params.hostName;
+            })[0];
+            if (typeof service === 'undefined') {
+                throw new Error(undefined);
+            } else {
+                res.statusCode = 200;
+                res.send(service);
+            }
+
+        }
+        catch (e) {
+            res.statusCode = 404;
+            res.send('Error: No data found for host ' + req.params.hostName);
+        }
     });
 
     /**
