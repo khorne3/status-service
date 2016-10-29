@@ -1,9 +1,9 @@
 # Service Status Microservice
-Service status microservice to receive json containing a key value pair. This service will use presistent storage to store all the data being posted. Each service posting to the serivce must create a unique id for the host sending the information. When pushing service updates the service must update instead of creating a new record. 
+Service status microservice to receive json containing a key value pair. This service will use presistent storage to store all the data being posted. Each service posting to the serivce must create a unique id for the host sending the information. When pushing service updates the service must update instead of creating a new record.
 
 [![Build Status](https://travis-ci.org/BondAnthony/status-service.svg?branch=master)](https://travis-ci.org/BondAnthony/status-service) [![Coverage Status](https://coveralls.io/repos/github/BondAnthony/status-service/badge.svg?branch=master)](https://coveralls.io/github/BondAnthony/status-service?branch=master) [!Slack #general](http://slack-invite.cfapps.io)
 
-# Install 
+# Install
 Install the service on your local machine by running ```npm install``` to use mocha from command line you will need to run ```npm install -g mocha```.
 - You can also install nodemon for development ```npm install -g nodemon```
 
@@ -16,6 +16,29 @@ Please develop test cases when possible.
 
 # Docs
 To create the api docs run ```npm run docs```
+
+# Use a docker container as indipendent datastore
+
+Run a docker container to setup a indipendent datastore (with [MongoDB](https://www.mongodb.com)) which could be deployed separate from the UI and service.
+
+### Before start:
+
+- install docker ([official documentation](https://docs.docker.com/engine/installation/))
+
+### Normal usage:
+
+- `cd database && docker-compose up` to start the container
+- `cd database && docker-compose stop` to stop the container
+
+### How to access it manually:
+
+If you want to access to the mongo container start it and then run:
+
+`docker exec -it CONTAINER_ID mongo admin`
+
+where `CONTAINER_ID` is the container's identifier, you can find it with this command `docker ps`.
+
+More details at the [official documentation](https://github.com/docker-library/docs/tree/master/mongo).
 
 # Example Usages
 ## POST request: GUI debuggers (i.e. Postman)
