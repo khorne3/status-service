@@ -25,18 +25,23 @@ describe('Testing /api/status endpoint', function () {
     it('Returns empty array for /api/status', function testPath(done) {
         request(server)
             .get('/api/status')
-            .expect(200, {"services":[]}, done);
+            .expect(200, {"services": []}, done);
     });
     it('Returns 404 if posting service without serviceName', function testPath(done) {
         request(server)
             .post('/api/status')
-            .send({hostName: 'localhost', value: 1})
+            .send({
+                hostName: 'localhost',
+                value: 1
+            })
             .expect(400, 'Error 400: Post syntax incorrect.', done);
     });
     it('Returns 404 if posting service without value', function testPath(done) {
         request(server)
             .post('/api/status')
-            .send({serviceName: 'service name'})
+            .send({
+                serviceName: 'service name'
+            })
             .expect(400, 'Error 400: Post syntax incorrect.', done);
     });
 
@@ -78,6 +83,7 @@ describe('Testing /api/status endpoint', function () {
             .get('/api/status')
             .expect(200)
             .expect(getServiceId)
+            .expect(checkRsp)
             .end(function () {
                 request(server)
                     .delete('/api/status/' + serviceId)
@@ -93,7 +99,11 @@ describe('Testing /api/status post endpoint responses', function () {
     it('Checking successful post requests, online', function testPath(done) {
         request(server)
             .post('/api/status')
-            .send({serviceName: 'testService', hostName: 'localhost', value: 1})
+            .send({
+                serviceName: 'testService',
+                hostName: 'localhost',
+                value: 1
+            })
             .expect(200)
             .end(done);
     });
@@ -101,8 +111,24 @@ describe('Testing /api/status post endpoint responses', function () {
     it('Checking successful post requests, offline', function testPath(done) {
         request(server)
             .post('/api/status')
-            .send({serviceName: 'testService', hostName: 'localhost', value: 0})
+            .send({
+                serviceName: 'testService',
+                hostName: 'localhost',
+                value: 0
+            })
             .expect(200)
+            .end(done);
+    });
+
+    it('Checking for invalid isOnline value', function testPath(done) {
+        request(server)
+            .post('/api/status')
+            .send({
+                hostName: 'nyc01.domain.com',
+                serviceName: 'spark',
+                value: 2
+            })
+            .expect(401, 'Error 401: Post syntax has an invalid isOnline value.')
             .end(done);
     });
 });
