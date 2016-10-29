@@ -11,9 +11,9 @@ Install the service on your local machine by running ```npm install``` to use mo
 Run the application by executing ```npm start``` or ```nodemon server.js```.
 
 # Tests
-Execute tests by running ```moch test``` or ```npm test```
+Execute tests by running ```mocha test``` or ```npm test```
 Please develop test cases when possible.
-
+- Test cases are broken down by api or front-end subject areas.
 # Docs
 To create the api docs run ```npm run docs```
 

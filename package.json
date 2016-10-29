@@ -10,7 +10,8 @@
     "test": "mocha test",
     "start": "node server.js",
     "docs": "apidoc -i routes/ -o gh-pages/",
-    "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*"
+    "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*",
+    "postinstall": "bower install"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   "homepage": "https://github.com/BondAnthony/status-service#readme",
   "dependencies": {
     "body-parser": "^1.15.2",
+    "bower": "^1.7.9",
     "express": "^4.14.0",
     "lodash": "^4.16.4",
     "ms": "^0.7.2",
