@@ -1,6 +1,6 @@
 var request = require('supertest');
+
 describe('Testing /api/status endpoint', function () {
-    var server;
     beforeEach(function () {
         server = require('../server');
     });
@@ -87,16 +87,21 @@ describe('Testing /api/status endpoint', function () {
             .end(function () {
                 request(server)
                     .delete('/api/status/' + serviceId)
-                    .expect(400, 'Error 400: Delete syntax incorrect.')
+                    .expect(404, 'Error 404: Delete parameter invalid, no host found')
                     .end(done);
             });
     });
 });
 
 describe('Testing /api/status post endpoint responses', function () {
-    var server = require('../server');
+    beforeEach(function () {
+        server = require('../server', { bustCache: true });
+    });
+    afterEach(function () {
+        server.close();
+    });
 
-    it('Checking successful post requests, online', function testPath(done) {
+    it('Checking successful post requests, online', function (done) {
         request(server)
             .post('/api/status')
             .send({
@@ -108,7 +113,7 @@ describe('Testing /api/status post endpoint responses', function () {
             .end(done);
     });
 
-    it('Checking successful post requests, offline', function testPath(done) {
+    it('Checking successful post requests, offline', function (done) {
         request(server)
             .post('/api/status')
             .send({
@@ -129,6 +134,119 @@ describe('Testing /api/status post endpoint responses', function () {
                 value: 2
             })
             .expect(401, 'Error 401: Post syntax has an invalid isOnline value.')
+            .end(done);
+    });
+});
+
+describe('Testing /api/status passing a parameter', function () {
+    beforeEach(function () {
+        delete require.cache[require.resolve('../server')];
+        server = require('../server');
+    });
+    afterEach(function () {
+        server.close();
+    });
+
+    it('Checking for params does not exist', function (done) {
+        request(server)
+            .post('/api/status')
+            .send({
+                hostName: 'sfo010.domain.com',
+                serviceName: '/api/brickyard',
+                value: 1
+            })
+            .expect(200, {
+                "message": "Status submission successful",
+                "payload": [
+                    {
+                        "hostName": "sfo010.domain.com",
+                        "serviceName": "/api/brickyard",
+                        "value": "Online"
+                    }
+                ]
+            })
+            .end(function () {
+                request(server)
+                    .get('/api/status/sfo020.domain.com')
+                    .expect(404, 'Error: No data found for host sfo020.domain.com')
+                    .end(done);
+            });
+    });
+
+    it('Checking for params exist', function (done) {
+        request(server)
+            .post('/api/status')
+            .send({
+                hostName: 'sfo010.domain.com',
+                serviceName: '/api/brickyard',
+                value: 1
+            })
+            .expect(200, {
+                "message": "Status submission successful",
+                "payload": [
+                    {
+                        "hostName": "sfo010.domain.com",
+                        "serviceName": "/api/brickyard",
+                        "value": "Online"
+                    }
+                ]
+            })
+            .end(function () {
+                request(server)
+                    .get('/api/status/sfo010.domain.com')
+                    .expect(200, {
+                        "hostName": "sfo010.domain.com",
+                        "serviceName": "/api/brickyard",
+                        "value": "Online"
+                    })
+                    .end(done);
+            });
+    });
+
+    it('Delete data from /api/status', function (done) {
+        request(server)
+            .post('/api/status')
+            .send({
+                hostName: 'sfo010.domain.com',
+                serviceName: '/api/brickyard',
+                value: 1
+            })
+            .send({
+                hostName: 'sfo020.domain.com',
+                serviceName: '/api/shipyard',
+                value: 2
+            })
+            .send({
+                hostName: 'sfo030.domain.com',
+                serviceName: '/api/stoneyard',
+                value: 1
+            })
+            .expect(200)
+            .end(function () {
+                request(server)
+                    .delete('/api/status/sfo020.domain.com')
+                    .expect(200, 'Deleted sfo020.domain.com successfully')
+                    .end(function () {
+                        request(server)
+                            .get('/api/status')
+                            .expect(200, {
+                                "services": [
+                                    {
+                                        "hostName": "sfo030.domain.com",
+                                        "serviceName": "/api/stoneyard",
+                                        "value": "Online"
+                                    }
+                                ]
+                            })
+                            .end(done);
+                    })
+            });
+    });
+
+    it('Attempt to delete host not in array', function (done) {
+        request(server)
+            .delete('/api/status/sfo010.domain.com')
+            .expect(404, 'Error 404: No data found for host sfo010.domain.com')
             .end(done);
     });
 });

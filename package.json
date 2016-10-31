@@ -30,8 +30,7 @@
     "lodash": "^4.16.4",
     "log4js": "^0.6.38",
     "ms": "^0.7.2",
-    "node-uuid": "^1.4.7",
-    "pug": "^2.0.0-beta6"
+    "node-uuid": "^1.4.7"
   },
   "apidoc": {
     "name": "Status Service",
