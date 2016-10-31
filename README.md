@@ -22,9 +22,9 @@ Please develop test cases when possible.
 # Docs
 To create the api docs run ```npm run docs```
 
-# Use a docker container as indipendent datastore
+# Use a docker container as independent datastore
 
-Run a docker container to setup a indipendent datastore (with [MongoDB](https://www.mongodb.com)) which could be deployed separate from the UI and service.
+Run a docker container to setup a independent datastore (with [MongoDB](https://www.mongodb.com)) which could be deployed separate from the UI and service.
 
 ### Before start:
 
