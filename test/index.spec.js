@@ -1,6 +1,11 @@
 var request = require('supertest');
 describe('Testing HTML response', function () {
-    var server = require('../server');
+    beforeEach(function () {
+        server = require('../server');
+    });
+    afterEach(function () {
+        server.close();
+    });
 
     it('Checking for null HTML responses', function testPath(done) {
         var checkRsp = function (res) {
