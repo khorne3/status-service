@@ -1,0 +1,12 @@
+{
+  "name": "statusservice",
+  "description": "Service status application to track running services.",
+  "main": "server.js",
+  "authors": [
+    "ajbond2005@gmail.com"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "angular": "1.4.5"
+  }
+}
