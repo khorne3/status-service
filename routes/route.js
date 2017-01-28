@@ -1,5 +1,4 @@
 var _ = require('lodash');
-var uuid = require('node-uuid');
 var path = require('path');
 
 module.exports = function (app) {
@@ -20,7 +19,7 @@ module.exports = function (app) {
      * @apiSuccess {Array} _ all data in `_services`
      * @apiSuccess {String} _.0.hostName hostName of the service update
      * @apiSuccess {String} _.0.serviceName Name of the service
-     * @apiSuccess {any} _.0.value Information contained in the update.
+     * @apiSuccess {any} _.0.isOnline Information contained in the update.
      */
     app.get('/api/status', function (req, res) {
         res.json({services: _services});
@@ -32,15 +31,15 @@ module.exports = function (app) {
      * @apiName status
      */
     app.post('/api/status', function (req, res) {
-        var serviceValue = "";
-        if (!req.body.hasOwnProperty('hostName') || !req.body.hasOwnProperty('serviceName') || !req.body.hasOwnProperty('value')) {
+        var serviceIsOnline = "";
+        if (!req.body.hasOwnProperty('hostName') || !req.body.hasOwnProperty('serviceName') || !req.body.hasOwnProperty('isOnline')) {
             res.statusCode = 400;
             return res.send('Error 400: Post syntax incorrect.');
         } else {
-            if (req.body.value === 1) {
-                serviceValue = "Online";
-            } else if (req.body.value === 0) {
-                serviceValue = "Offline";
+            if (req.body.isOnline === 1) {
+                serviceIsOnline = "Online";
+            } else if (req.body.isOnline === 0) {
+                serviceIsOnline = "Offline";
             } else {
                 res.statusCode = 401;
                 return res.send('Error 401: Post syntax has an invalid isOnline value.');
@@ -48,7 +47,7 @@ module.exports = function (app) {
             var newService = {
                 hostName: req.body.hostName,
                 serviceName: req.body.serviceName,
-                value: serviceValue
+                isOnline: serviceIsOnline
             };
             _services.push(newService);
 
@@ -93,28 +92,20 @@ module.exports = function (app) {
         var hostID = req.params.id;
         var isDeleted = 0;
 
+        function removeObj(obj, prop, id){
+            return obj.filter(function(val){
+                return val[prop] !== id;
+            });
+        }
+
         if (hostID === 'undefined'){
             res.statusCode = 404;
             res.send('Error 404: Delete parameter invalid, no host found');
             return;
-        }
-
-        for (var i = _services.length - 1; i >= 0; i--) {
-            if (_services[i].hostName === hostID) {
-                console.log('Deleting data for host: ' + _services[i].hostName);
-                _services.splice(i, 1);
-
-            } else {
-                isDeleted++;
-            }
-        }
-
-        if (isDeleted > 1) {
+        } else {
+            _services = removeObj(_services, 'hostName', hostID);
             res.statusCode = 200;
             res.send('Deleted ' + hostID + ' successfully');
-        } else {
-            res.statusCode = 404;
-            res.send('Error 404: No data found for host ' + hostID);
         }
     });
-}
+};
