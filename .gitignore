@@ -12,6 +12,7 @@ coverage
 gh-pages
 .DS_Store
 .vscode
+prePopulate.sh
 # Ignore Webstorm config files
 *.idea
 static/lib

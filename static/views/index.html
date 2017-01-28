@@ -44,8 +44,8 @@
                 </div>
               </div>
               <h4 id="service-status" class="pull-right">
-                <span ng-if="service.value === 'Online'" class="label label-success">{{ service.value }}</span>
-                <span ng-if="service.value !== 'Online'" class="label label-danger">{{ service.value }}</span>
+                <span ng-if="service.isOnline === 'Online'" class="label label-success">{{ service.isOnline }}</span>
+                <span ng-if="service.isOnline !== 'Online'" class="label label-danger">{{ service.isOnline }}</span>
               </h4>
               <div class="clearfix"></div>
             </li>

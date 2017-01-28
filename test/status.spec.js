@@ -1,11 +1,19 @@
 var request = require('supertest');
+serverSetup = function (delCache) {
+    server = require('../server', delCache);
+};
+serverClose = function (done) {
+    server.close(done);
+};
+
+server = require('../server')
 
 describe('Testing /api/status endpoint', function () {
     beforeEach(function () {
-        server = require('../server');
+        serverSetup();
     });
     afterEach(function () {
-        server.close();
+        serverClose();
     });
     it('Responds to /', function testRoot(done) {
         request(server)
@@ -72,7 +80,7 @@ describe('Testing /api/status endpoint', function () {
         var serviceId;
         var getServiceId = function (res) {
             if (!('serviceName' in res.body[0])) throw new Error("missing serviceName key");
-            if (!('value' in res.body[0])) throw new Error("missing value key");
+            if (!('isOnline' in res.body[0])) throw new Error("missing isOnline key");
             serviceId = res.body[0].id;
         };
         var checkRsp = function (res) {
@@ -95,10 +103,11 @@ describe('Testing /api/status endpoint', function () {
 
 describe('Testing /api/status post endpoint responses', function () {
     beforeEach(function () {
-        server = require('../server', { bustCache: true });
+        delete require.cache[require.resolve('../server')];
+        serverSetup();
     });
     afterEach(function () {
-        server.close();
+        serverClose();
     });
 
     it('Checking successful post requests, online', function (done) {
@@ -107,7 +116,7 @@ describe('Testing /api/status post endpoint responses', function () {
             .send({
                 serviceName: 'testService',
                 hostName: 'localhost',
-                value: 1
+                isOnline: 1
             })
             .expect(200)
             .end(done);
@@ -119,7 +128,7 @@ describe('Testing /api/status post endpoint responses', function () {
             .send({
                 serviceName: 'testService',
                 hostName: 'localhost',
-                value: 0
+                isOnline: 0
             })
             .expect(200)
             .end(done);
@@ -131,7 +140,7 @@ describe('Testing /api/status post endpoint responses', function () {
             .send({
                 hostName: 'nyc01.domain.com',
                 serviceName: 'spark',
-                value: 2
+                isOnline: 2
             })
             .expect(401, 'Error 401: Post syntax has an invalid isOnline value.')
             .end(done);
@@ -140,11 +149,10 @@ describe('Testing /api/status post endpoint responses', function () {
 
 describe('Testing /api/status passing a parameter', function () {
     beforeEach(function () {
-        delete require.cache[require.resolve('../server')];
-        server = require('../server');
+        serverSetup('{ bustCache: true }');
     });
     afterEach(function () {
-        server.close();
+        serverClose();
     });
 
     it('Checking for params does not exist', function (done) {
@@ -153,17 +161,15 @@ describe('Testing /api/status passing a parameter', function () {
             .send({
                 hostName: 'sfo010.domain.com',
                 serviceName: '/api/brickyard',
-                value: 1
+                isOnline: 1
             })
             .expect(200, {
                 "message": "Status submission successful",
-                "payload": [
-                    {
-                        "hostName": "sfo010.domain.com",
-                        "serviceName": "/api/brickyard",
-                        "value": "Online"
-                    }
-                ]
+                "payload": [{
+                    "hostName": "sfo010.domain.com",
+                    "serviceName": "/api/brickyard",
+                    "value": "Online"
+                }]
             })
             .end(function () {
                 request(server)
@@ -179,17 +185,15 @@ describe('Testing /api/status passing a parameter', function () {
             .send({
                 hostName: 'sfo010.domain.com',
                 serviceName: '/api/brickyard',
-                value: 1
+                isOnline: 1
             })
             .expect(200, {
                 "message": "Status submission successful",
-                "payload": [
-                    {
-                        "hostName": "sfo010.domain.com",
-                        "serviceName": "/api/brickyard",
-                        "value": "Online"
-                    }
-                ]
+                "payload": [{
+                    "hostName": "sfo010.domain.com",
+                    "serviceName": "/api/brickyard",
+                    "isOnline": "Online"
+                }]
             })
             .end(function () {
                 request(server)
@@ -197,10 +201,27 @@ describe('Testing /api/status passing a parameter', function () {
                     .expect(200, {
                         "hostName": "sfo010.domain.com",
                         "serviceName": "/api/brickyard",
-                        "value": "Online"
+                        "isOnline": "Online"
                     })
                     .end(done);
             });
+    });
+
+    it('Attempt to delete host not in array', function (done) {
+        request(server)
+            .delete('/api/status/sfo010.domain.com')
+            .expect(200, 'Deleted sfo010.domain.com successfully')
+            .end(done);
+    });
+});
+
+describe('Testing /api/status passing a parameter', function () {
+    beforeEach(function () {
+        delete require.cache[require.resolve('../server')];
+        serverSetup('{ bustCache: true }');
+    });
+    afterEach(function () {
+        serverClose();
     });
 
     it('Delete data from /api/status', function (done) {
@@ -209,44 +230,19 @@ describe('Testing /api/status passing a parameter', function () {
             .send({
                 hostName: 'sfo010.domain.com',
                 serviceName: '/api/brickyard',
-                value: 1
+                isOnline: 1
             })
             .send({
                 hostName: 'sfo020.domain.com',
                 serviceName: '/api/shipyard',
-                value: 2
-            })
-            .send({
-                hostName: 'sfo030.domain.com',
-                serviceName: '/api/stoneyard',
-                value: 1
+                isOnline: 0
             })
             .expect(200)
             .end(function () {
                 request(server)
                     .delete('/api/status/sfo020.domain.com')
                     .expect(200, 'Deleted sfo020.domain.com successfully')
-                    .end(function () {
-                        request(server)
-                            .get('/api/status')
-                            .expect(200, {
-                                "services": [
-                                    {
-                                        "hostName": "sfo030.domain.com",
-                                        "serviceName": "/api/stoneyard",
-                                        "value": "Online"
-                                    }
-                                ]
-                            })
-                            .end(done);
-                    })
-            });
-    });
-
-    it('Attempt to delete host not in array', function (done) {
-        request(server)
-            .delete('/api/status/sfo010.domain.com')
-            .expect(404, 'Error 404: No data found for host sfo010.domain.com')
-            .end(done);
+                    .end(done);
+            }); 
     });
 });
