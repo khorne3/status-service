@@ -1,8 +1,48 @@
-var _ = require('lodash');
+/* jshint node: true */
+// var _ = require('lodash');
 var path = require('path');
+var validate = require('express-jsonschema').validate;
 
 module.exports = function (app) {
+    "use strict";
     var _services = [];
+    /**
+     *  JSON Schema For /api/status post
+     * @type {{type: string, properties: {host: {type: string, required: boolean}, services: {type: string, items: {type: string, properties: {name: {type: string, required: boolean}, is_online: {type: string, required: boolean}, update_at: {type: string, required: boolean}, mesg: {type: string}}}}}}}
+     */
+    var statusSchema = {
+        type: 'object',
+        properties: {
+            host: {
+                type: 'string',
+                required: true
+            },
+            services: {
+                type: 'array',
+                items: {
+                    type: 'object',
+                    properties: {
+                        name: {
+                            type: 'string',
+                            required: true
+                        },
+                        is_online: {
+                            type: 'integer',
+                            required: true
+                        },
+                        update_at: {
+                            type: 'string',
+                            required: true
+                        },
+                        mesg: {
+                            type: 'string'
+                        }
+                    }
+                }
+            }
+        }
+    };
+
     /**
      * @api {get} / Request homepage
      * @apiName Homepage
@@ -22,7 +62,7 @@ module.exports = function (app) {
      * @apiSuccess {any} _.0.isOnline Information contained in the update.
      */
     app.get('/api/status', function (req, res) {
-        res.json({services: _services});
+        res.json({data: _services});
     });
 
     /**
@@ -30,30 +70,37 @@ module.exports = function (app) {
      * @apiGroup Status
      * @apiName status
      */
-    app.post('/api/status', function (req, res) {
+    app.post('/api/status', validate({body: statusSchema}), function (req, res) {
         var serviceIsOnline = "";
-        if (!req.body.hasOwnProperty('hostName') || !req.body.hasOwnProperty('serviceName') || !req.body.hasOwnProperty('isOnline')) {
-            res.statusCode = 400;
-            return res.send('Error 400: Post syntax incorrect.');
-        } else {
-            if (req.body.isOnline === 1) {
+        var newService = [];
+        //Set Online Value
+        for (var i = 0; i < req.body.services.length; i++) {
+            if (req.body.services[i].is_online === 1) {
                 serviceIsOnline = "Online";
-            } else if (req.body.isOnline === 0) {
+            } else if (req.body.services[i].is_online === 0) {
                 serviceIsOnline = "Offline";
             } else {
-                res.statusCode = 401;
-                return res.send('Error 401: Post syntax has an invalid isOnline value.');
+                return res.status(400).send({
+                    error: 'Post syntax has an invalid isOnline value.',
+                    data: req.body.services[i]
+                });
             }
-            var newService = {
-                hostName: req.body.hostName,
-                serviceName: req.body.serviceName,
-                isOnline: serviceIsOnline
-            };
-            _services.push(newService);
-
-            // json needs to be returned rather than a random string
-            res.status(200).json({message: 'Status submission successful', payload: _services});
+            newService.push({
+                "name": req.body.services[i].name,
+                "is_online": serviceIsOnline,
+                "update_at": req.body.services[i].update_at,
+                "mesg": req.body.services[i].mesg
+            });
         }
+        var serviceUpdate = {
+            "host": req.body.host,
+            "services": newService
+        };
+
+        _services.push(serviceUpdate);
+
+        // json needs to be returned rather than a random string
+        res.status(200).json({message: 'Status submission successful', payload: newService});
     });
 
     /**
@@ -66,19 +113,18 @@ module.exports = function (app) {
 
         try {
             var service = _services.filter(function (s) {
-                return s.hostName == req.params.hostName;
+                return s.host === req.params.hostName;
             })[0];
             if (typeof service === 'undefined') {
                 throw new Error(undefined);
             } else {
-                res.statusCode = 200;
-                res.send(service);
+                res.status(200).send(service);
             }
 
         }
         catch (e) {
-            res.statusCode = 404;
-            res.send('Error: No data found for host ' + req.params.hostName);
+            res.status(404).send({'error': 'No data found for host ' + req.params.hostName,
+            'status': 404});
         }
     });
 
@@ -90,22 +136,20 @@ module.exports = function (app) {
      */
     app.delete('/api/status/:id', function (req, res) {
         var hostID = req.params.id;
-        var isDeleted = 0;
 
-        function removeObj(obj, prop, id){
-            return obj.filter(function(val){
+        function removeObj(obj, prop, id) {
+            return obj.filter(function (val) {
                 return val[prop] !== id;
             });
         }
 
-        if (hostID === 'undefined'){
-            res.statusCode = 404;
-            res.send('Error 404: Delete parameter invalid, no host found');
-            return;
+        if (hostID === 'undefined') {
+            res.status(404).send({'error': 'Delete parameter invalid, no host found',
+            'status': 404});
         } else {
-            _services = removeObj(_services, 'hostName', hostID);
-            res.statusCode = 200;
-            res.send('Deleted ' + hostID + ' successfully');
+            _services = removeObj(_services, 'host', hostID);
+            res.status(200).send({'data': 'Deleted ' + hostID + ' successfully',
+            'status': 200});
         }
     });
 };
