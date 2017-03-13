@@ -11,7 +11,7 @@
 		vm.services = [];
 
 		$http.get(statusUrl).then(function (response) {
-			angular.forEach(response.data.services, function (service) {
+			angular.forEach(response.data.data, function (service) {
 				this.push(service);
 			}, vm.services);
 		});

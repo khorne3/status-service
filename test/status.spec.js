@@ -33,24 +33,16 @@ describe('Testing /api/status endpoint', function () {
     it('Returns empty array for /api/status', function testPath(done) {
         request(server)
             .get('/api/status')
-            .expect(200, {"services": []}, done);
+            .expect(200, {"data": []}, done);
     });
-    it('Returns 404 if posting service without serviceName', function testPath(done) {
+    it('Returns 500 if schema validation fails', function testPath(done) {
         request(server)
             .post('/api/status')
             .send({
                 hostName: 'localhost',
                 value: 1
             })
-            .expect(400, 'Error 400: Post syntax incorrect.', done);
-    });
-    it('Returns 404 if posting service without value', function testPath(done) {
-        request(server)
-            .post('/api/status')
-            .send({
-                serviceName: 'service name'
-            })
-            .expect(400, 'Error 400: Post syntax incorrect.', done);
+            .expect(500, done);
     });
 
     it('Returns true service when deleting it by id', function testPath(done) {
@@ -95,7 +87,7 @@ describe('Testing /api/status endpoint', function () {
             .end(function () {
                 request(server)
                     .delete('/api/status/' + serviceId)
-                    .expect(404, 'Error 404: Delete parameter invalid, no host found')
+                    .expect(404,{"error":"Delete parameter invalid, no host found","status":404})
                     .end(done);
             });
     });
@@ -114,11 +106,39 @@ describe('Testing /api/status post endpoint responses', function () {
         request(server)
             .post('/api/status')
             .send({
-                serviceName: 'testService',
-                hostName: 'localhost',
-                isOnline: 1
+                "host": "nyc010.domain.com",
+                "services": [
+                    {
+                        "name": "boxy",
+                        "is_online": 1,
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "OutOfMemory system crashed"
+                    },
+                    {
+                        "name": "mongo",
+                        "is_online": 1,
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "System healthy"
+                    }
+                ]
             })
-            .expect(200)
+            .expect(200,{
+                "message": "Status submission successful",
+                "payload": [
+                    {
+                        "name": "boxy",
+                        "is_online": "Online",
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "OutOfMemory system crashed"
+                    },
+                    {
+                        "name": "mongo",
+                        "is_online": "Online",
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "System healthy"
+                    }
+                ]
+            })
             .end(done);
     });
 
@@ -126,11 +146,39 @@ describe('Testing /api/status post endpoint responses', function () {
         request(server)
             .post('/api/status')
             .send({
-                serviceName: 'testService',
-                hostName: 'localhost',
-                isOnline: 0
+                "host": "nyc010.domain.com",
+                "services": [
+                    {
+                        "name": "boxy",
+                        "is_online": 0,
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "OutOfMemory system crashed"
+                    },
+                    {
+                        "name": "mongo",
+                        "is_online": 0,
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "System healthy"
+                    }
+                ]
             })
-            .expect(200)
+            .expect(200,{
+                "message": "Status submission successful",
+                "payload": [
+                    {
+                        "name": "boxy",
+                        "is_online": "Offline",
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "OutOfMemory system crashed"
+                    },
+                    {
+                        "name": "mongo",
+                        "is_online": "Offline",
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "System healthy"
+                    }
+                ]
+            })
             .end(done);
     });
 
@@ -138,11 +186,31 @@ describe('Testing /api/status post endpoint responses', function () {
         request(server)
             .post('/api/status')
             .send({
-                hostName: 'nyc01.domain.com',
-                serviceName: 'spark',
-                isOnline: 2
+                "host": "nyc010.domain.com",
+                "services": [
+                    {
+                        "name": "boxy",
+                        "is_online": 2,
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "OutOfMemory system crashed"
+                    },
+                    {
+                        "name": "mongo",
+                        "is_online": 1,
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "System healthy"
+                    }
+                ]
             })
-            .expect(401, 'Error 401: Post syntax has an invalid isOnline value.')
+            .expect(400,{
+                "error": "Post syntax has an invalid isOnline value.",
+                "data": {
+                    "name": "boxy",
+                    "is_online": 2,
+                    "update_at": "2014-11-14T16:36:31Z",
+                    "mesg": "OutOfMemory system crashed"
+                }
+            })
             .end(done);
     });
 });
@@ -159,22 +227,46 @@ describe('Testing /api/status passing a parameter', function () {
         request(server)
             .post('/api/status')
             .send({
-                hostName: 'sfo010.domain.com',
-                serviceName: '/api/brickyard',
-                isOnline: 1
+                "host": "nyc010.domain.com",
+                "services": [
+                    {
+                        "name": "boxy",
+                        "is_online": 1,
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "OutOfMemory system crashed"
+                    },
+                    {
+                        "name": "mongo",
+                        "is_online": 1,
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "System healthy"
+                    }
+                ]
             })
             .expect(200, {
                 "message": "Status submission successful",
-                "payload": [{
-                    "hostName": "sfo010.domain.com",
-                    "serviceName": "/api/brickyard",
-                    "value": "Online"
-                }]
+                "payload": [
+                    {
+                        "name": "boxy",
+                        "is_online": "Online",
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "OutOfMemory system crashed"
+                    },
+                    {
+                        "name": "mongo",
+                        "is_online": "Online",
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "System healthy"
+                    }
+                ]
             })
             .end(function () {
                 request(server)
                     .get('/api/status/sfo020.domain.com')
-                    .expect(404, 'Error: No data found for host sfo020.domain.com')
+                    .expect(404,{
+                        "error": "No data found for host sfo020.domain.com",
+                        "status": 404
+                    })
                     .end(done);
             });
     });
@@ -183,25 +275,58 @@ describe('Testing /api/status passing a parameter', function () {
         request(server)
             .post('/api/status')
             .send({
-                hostName: 'sfo010.domain.com',
-                serviceName: '/api/brickyard',
-                isOnline: 1
+                "host": "nyc010.domain.com",
+                "services": [
+                    {
+                        "name": "boxy",
+                        "is_online": 1,
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "OutOfMemory system crashed"
+                    },
+                    {
+                        "name": "mongo",
+                        "is_online": 1,
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "System healthy"
+                    }
+                ]
             })
             .expect(200, {
                 "message": "Status submission successful",
-                "payload": [{
-                    "hostName": "sfo010.domain.com",
-                    "serviceName": "/api/brickyard",
-                    "isOnline": "Online"
-                }]
+                "payload": [
+                    {
+                        "name": "boxy",
+                        "is_online": "Online",
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "OutOfMemory system crashed"
+                    },
+                    {
+                        "name": "mongo",
+                        "is_online": "Online",
+                        "update_at": "2014-11-14T16:36:31Z",
+                        "mesg": "System healthy"
+                    }
+                ]
             })
             .end(function () {
                 request(server)
-                    .get('/api/status/sfo010.domain.com')
-                    .expect(200, {
-                        "hostName": "sfo010.domain.com",
-                        "serviceName": "/api/brickyard",
-                        "isOnline": "Online"
+                    .get('/api/status/nyc010.domain.com')
+                    .expect(200,{
+                        "host": "nyc010.domain.com",
+                        "services": [
+                            {
+                                "name": "boxy",
+                                "is_online": "Online",
+                                "update_at": "2014-11-14T16:36:31Z",
+                                "mesg": "OutOfMemory system crashed"
+                            },
+                            {
+                                "name": "mongo",
+                                "is_online": "Online",
+                                "update_at": "2014-11-14T16:36:31Z",
+                                "mesg": "System healthy"
+                            }
+                        ]
                     })
                     .end(done);
             });
@@ -210,39 +335,7 @@ describe('Testing /api/status passing a parameter', function () {
     it('Attempt to delete host not in array', function (done) {
         request(server)
             .delete('/api/status/sfo010.domain.com')
-            .expect(200, 'Deleted sfo010.domain.com successfully')
+            .expect(200,{ data: 'Deleted sfo010.domain.com successfully', status: 200 })
             .end(done);
-    });
-});
-
-describe('Testing /api/status passing a parameter', function () {
-    beforeEach(function () {
-        delete require.cache[require.resolve('../server')];
-        serverSetup('{ bustCache: true }');
-    });
-    afterEach(function () {
-        serverClose();
-    });
-
-    it('Delete data from /api/status', function (done) {
-        request(server)
-            .post('/api/status')
-            .send({
-                hostName: 'sfo010.domain.com',
-                serviceName: '/api/brickyard',
-                isOnline: 1
-            })
-            .send({
-                hostName: 'sfo020.domain.com',
-                serviceName: '/api/shipyard',
-                isOnline: 0
-            })
-            .expect(200)
-            .end(function () {
-                request(server)
-                    .delete('/api/status/sfo020.domain.com')
-                    .expect(200, 'Deleted sfo020.domain.com successfully')
-                    .end(done);
-            }); 
     });
 });

@@ -29,7 +29,7 @@ describe('Testing HTML response', function () {
             .get('/')
             .expect(200)
             .expect('content-type', 'text/html; charset=UTF-8')
-            .expect('content-length', '2435')
+            .expect('content-length', '3706')
             .end(done);
     });
 });
