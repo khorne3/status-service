@@ -30,7 +30,7 @@ deploy:
     organization: travis-ci
     space: stage
     on:
-      repo: $DOCKERU/status-service
+      repo: bondanthony/status-service
       branch: master
   - provider: cloudfoundry
     api: https://api.run.pivotal.io
@@ -40,5 +40,5 @@ deploy:
     organization: travis-ci
     space: development
     on:
-      repo: $DOCKERU/status-service
+      repo: bondanthony/status-service
       branch: devel
