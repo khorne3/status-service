@@ -52,21 +52,21 @@ You would be submitting json objects in the body of the text. You also need to i
 POST - http://localhost:3000/api/status
 ```
 {
-	"host": "nyc010.domain.com",
-	"services": [
-		{
-			"name": "brickyard api",
-            "is_online": 1,
-            "update_at": "2014-11-14T16:36:31Z",
-            "mesg": "System Online: Average response 200ms"
-          },
-          {
-            "name": "ords",
-            "is_online": 1,
-            "update_at": "2014-11-14T16:36:31Z",
-            "mesg": "Oracle REST is open for business"
-        }
-    ]
+  "host": "nyc010.domain.com",
+  "services": [
+    {
+      "name": "brickyard api",
+      "is_online": 1,
+      "update_at": "2014-11-14T16:36:31Z",
+      "mesg": "System Online: Average response 200ms"
+    },
+    {
+      "name": "ords",
+      "is_online": 1,
+      "update_at": "2014-11-14T16:36:31Z",
+      "mesg": "Oracle REST is open for business"
+    }
+  ]
 }
 ```
 

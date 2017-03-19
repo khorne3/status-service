@@ -1,6 +1,6 @@
 {
   "name": "statusservice",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Service status application to track running services.",
   "main": "server.js",
   "directories": {
