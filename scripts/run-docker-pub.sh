@@ -1,6 +1,7 @@
 #!/bin/bash
 set -ev
 scode=`curl -s -o /dev/null -w "%{http_code}" http://localhost/api/status`
+
 if [ $scode != 200 ]
 then
   echo "Status Code: $scode"
