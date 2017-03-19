@@ -18,7 +18,7 @@ after_success:
   - docker build -t bondanthony/status-service .
   - docker run -d --name=status-service -p 80:80 bondanthony/status-service
   - docker ps
-  - scode=`curl -s -o /dev/null -w "%{http_code}" http://localhost/api/status`; if [ $scode = 200 ]; then if [ "$TRAVIS_BRANCH" = "master" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then docker login -u="$DOCKERU" -p="$DOCKERP"; docker push $DOCKERU/service-status:latest; fi; fi;
+  - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then docker login -u="$DOCKERU" -p="$DOCKERP"; docker push $DOCKERU/status-service:latest; fi;
 
 deploy:
   - provider: cloudfoundry
