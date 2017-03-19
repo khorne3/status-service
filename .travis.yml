@@ -16,8 +16,8 @@ notifications:
 after_script: cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
 
 after_success:
-  - docker build -t $DOCKERU/service-status .
-  - docker run -d --name=service-status -p 80:80 $DOCKERU/service-status
+  - docker build -t bondanthony/status-service .
+  - docker run -d --name=status-service -p 80:80 bondanthony/service-status
   - docker ps
   - ./scripts/run-docker-pub.sh
 
