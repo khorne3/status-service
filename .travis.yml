@@ -19,15 +19,7 @@ after_success:
   - docker build -t $DOCKERU/service-status .
   - docker run -d --name=service-status -p 80:80 $DOCKERU/service-status
   - docker ps
-  - scode=`curl -s -o /dev/null -w "%{http_code}" http://localhost/api/status`;
-    if [ $scode -ne 200 ]; then
-    echo "Status Code: $scode"
-    exit 1
-    fi
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
-    docker login -u="$DOCKERU" -p="$DOCKERP";
-    docker push $DOCKERU/service-status:latest;
-    fi
+script: ./scripts/run-docker-pub.sh
 
 deploy:
   - provider: cloudfoundry
