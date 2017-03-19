@@ -19,7 +19,7 @@ after_success:
   - docker build -t $DOCKERU/service-status .
   - docker run -d --name=service-status -p 80:80 $DOCKERU/service-status
   - docker ps
-script: ./scripts/run-docker-pub.sh
+  - ./scripts/run-docker-pub.sh
 
 deploy:
   - provider: cloudfoundry
