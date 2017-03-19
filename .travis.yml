@@ -1,9 +1,12 @@
+sudo: required
 language: node_js
 node_js:
-- node
+  - node
 script:
-- npm run-script test-travis
-- npm run docs
+  - npm run-script test-travis
+  - npm run docs
+services:
+  - docker
 notifications:
   on_success: always
   on_failure: always
@@ -11,6 +14,12 @@ notifications:
     secure: BQctOeeRcxAM4p11IqiHztY9ce8e2KrNtrfxdAlW5+4YoZhT2YChr0Ns6DNoDGdvH070gKkUuWvWORJhbGrJvjOCbgjHPCJwhAYtF8BAm0Qh4885fFXY/kJ2/amBc14QeivA5BI9/xNFVv5Hf245MoaZ+yOJ0iE9Rsj83zEBiAm+0TodZaIhiAs9WLI67v5jYZsbaXvYCz6oweTVwZUdX0Q/7fQigowt53G7QsCQIoPV31T3JNNAwqh3OjHuYHInJHWepteI1pXlMdvGXhvN4AvbNlrzMzL4I3Tl1mItW2kd3wrVFHpLBleugcGMYjMFC6TVRAJqb4v0bJHuIRgXQY+loq7B4bJufGudyY7e2RoshKFPI1/yXYAAGg9X30EfUIPa1RWAeXhZx+S77h3IwyYyh6au7S1/mDFeiiErkPWQA5GPSDSfKcUhWjsKIMa36sOsANFss99qooeI1f1fratnl1WDh1hw2W9uT83vMqAL6vJ7PlvO3g1B+otqtJcXOLr2sstkHLc1r/Um1bQlN6PmVGcAmMLsUjvlhTkafoHnKcECJeYENLDgTW5Wh7As5aeWkbojP0BCibA1LHrWgYXi424AiZJ+XJN7MoQ6ZAKSWXUEGOfZIBQlLr//tHfgOH25kRdSsBo706euxD7Q0wKLcDGaUe/cUMVpda6OEms=
 
 after_script: cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+
+after_success:
+  - docker build -t $DOCKERU/service-status .
+  - docker run -d --name=service-status -p 80:80 $DOCKERU/service-status
+  - docker ps
+  - ./scripts/run-docker-pub.sh
 
 deploy:
   - provider: cloudfoundry
