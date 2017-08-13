@@ -1,4 +1,4 @@
-# Service Status Microservice
+# Status Service Microservice
 Service status microservice to receive json formatted requests being sent by a service or application on a remote host. This service will use presistent storage to store all the data being posted. Each service posting to the serivce must create a unique id for the host sending the information. The ideal goal is to run a simple and straight forward service and front-end within a container in an isolated environment.
 
 |Branch|Build Status|Test Coverage|
