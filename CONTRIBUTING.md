@@ -5,8 +5,8 @@ The repository is open to contributions from all interested developers. The proj
 Check the wiki for outstanding tasks that need to be completed. Pick up one of the features and open a pull request or issue. Join us on Slack if you have any questions or suggestions. [Slack #general](http://slack-invite.cfapps.io)
 
 # Procedure
-+ Create issues that need to be fixed and submit a pull request to master.
-+ Provide descriptive commit messages
++ Create issues that need to be fixed and submit a pull request to devel.
++ Provide descriptive commit message with your issue number included.
 + Update documentation when adding features or special configurations are required to run the application.
 + Changes are required to include a test case.
 
