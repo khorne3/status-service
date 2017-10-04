@@ -10,10 +10,10 @@ Service status microservice to receive json formatted requests being sent by a s
 
 |DOCS|
 |----|
-|![Development](https://github.com/BondAnthony/status-service/blob/master/docs/development/README.md "Development Docs")|
-|![Testing](https://github.com/BondAnthony/status-service/blob/master/docs/testing/README.md "Testing Docs")|
-|![Deployment](https://github.com/BondAnthony/status-service/blob/master/docs/deployment/README.md "Deployment Docs")|
-|![Getting Started](https://github.com/BondAnthony/status-service/blob/master/docs/getting_started/README.md "Getting Started Docs")|
+|![Development](/docs/development/README.md "Development Docs")|
+|![Testing](/docs/testing/README.md "Testing Docs")|
+|![Deployment](/docs/deployment/README.md "Deployment Docs")|
+|![Getting Started](/docs/getting_started/README.md "Getting Started Docs")|
 
 
 # Contribute
